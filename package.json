@@ -1,18 +1,17 @@
 {
   "name": "ask-hooks",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
-  "main": "./dist/ask.cjs",
-  "module": "./dist/ask.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/ask-hooks.cjs",
+  "module": "./dist/ask-hooks.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/ask.cjs",
-      "import": "./dist/ask.js",
-      "types": "./dist/src/index.d.ts"
-    },
-    "./style": "./dist/style.css"
+      "require": "./dist/ask-hooksc.js",
+      "import": "./dist/ask-hooks.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "publishConfig": {
     "access": "public"
@@ -24,8 +23,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "build:types": "ts-node buildTypes.ts"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -39,10 +37,12 @@
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

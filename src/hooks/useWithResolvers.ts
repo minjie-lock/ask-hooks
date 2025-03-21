@@ -1,16 +1,11 @@
 import { useRef } from 'react';
 
-type Resolve<S> = ((value?: S) => void) | null;
-
-type Reject = () => void;
-
 const withResolvers = <S>() => {
-  let resolve: Resolve<S> = () => void 0;
-  let reject: Reject = () => void 0;
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+  const {
+   promise,
+   resolve,
+   reject, 
+  } = Promise.withResolvers<S>();
   return {
     promise,
     resolve,
@@ -19,11 +14,10 @@ const withResolvers = <S>() => {
 };
 
 /**
- * 等待成功的异步
- * useWithResolvers
+ * @function useWithResolvers
+ * @description 等待成功的异步
  * @returns 
  */
-
 export default function useWithResolvers<S>() {
   const promise = useRef(withResolvers<S>());
   return {

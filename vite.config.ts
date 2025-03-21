@@ -1,31 +1,31 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import path from 'path'
-// https://vitejs.dev/config/
+import path, { join } from 'path'
+
 export default defineConfig({
   plugins: [
-    react(),
     dts({
-      include: ['src/**/*'],
+      include: ['src'],
       copyDtsFiles: true,
-    })
+      tsconfigPath: './tsconfig.types.json'
+    }),
+    react(),
   ],
+  resolve: {
+    alias: {
+      '@': join(__dirname, "src"),
+    }
+  },
   build: {
-    // 输出文件夹
     outDir: 'dist',
     lib: {
-      // 源码的入口文件
       entry: path.resolve(__dirname, 'src/index.ts'),
-      // 名称
-      name: 'ask_hooks',
-      // 文件名称
-      fileName: 'ask',
-      // 打包格式
+      name: 'ask-hooks',
+      fileName: 'ask-hooks',
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      // 排除不相关的依赖
       external: ['react', 'react-dom'],
     },
   },

@@ -15,7 +15,8 @@ type State<S> = [
   Dispatch<SetStateAction<S>>,
 ];
 /**
- * 一次满足 useGetState 和 useResetState 和 useInitialState 和 useSetState
+ * @function useGetResetInitialSetState
+ * @description 一次满足 useGetState 和 useResetState 和 useInitialState 和 useSetState
  * @param initialState 初始值
  * @returns {State}
  */
@@ -28,6 +29,7 @@ export default function useGetResetInitialSetState<S>(initialState: S): State<S>
   const restState = useCallback(() => {
     setState(initialState);
   }, []);
+  
   const setSetState = (value: S | ((value: S) => S)) => {
     setState({
       ...state,
@@ -42,5 +44,12 @@ export default function useGetResetInitialSetState<S>(initialState: S): State<S>
     [state],
   );
   const getInitState = () => data?.current as S;
-  return [state, setState, getState, restState, getInitState, setSetState];
+  return [
+    state,
+    setState,
+    getState,
+    restState,
+    getInitState,
+    setSetState
+  ];
 }
