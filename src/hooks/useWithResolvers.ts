@@ -1,11 +1,12 @@
 import { useRef } from 'react';
 
 const withResolvers = <S>() => {
-  const {
-   promise,
-   resolve,
-   reject, 
-  } = Promise.withResolvers<S>();
+
+  let resolve, reject;
+  const promise = new Promise((...args) => {
+    [resolve, reject] = args;
+  });
+
   return {
     promise,
     resolve,
