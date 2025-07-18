@@ -18,7 +18,7 @@ export type BaseResponseInfo<Data, CODE = BaseCode> = Promise<{
   message: string;
 }>;
 
-export type Fn<S> = (...args: never) => BaseResponseInfo<S>;
+export type Fn<S extends unknown, R> = (...args: S[]) => R;
 
 type FetchOptions<CODE, DATA> = {
 
@@ -53,15 +53,28 @@ type FetchOptions<CODE, DATA> = {
    * 自定义处理错误
    */
   onError?: (error: BaseError) => void;
-}
+};
+
+/**
+ * @description 返回值
+*/
+type R_N = BaseResponseInfo<unknown, BaseCode>;
+
+/**
+ * @description 成功码
+ */
+type C_S = typeof BASE_CODE['SUCCESS'];
+
 /**
  * @function useFetch
  * @param fn 接口函数
  * @param options 消息配置项
  * @returns 
  */
-export default function useFetchFn<S, F extends Fn<S>,
-  C extends typeof BASE_CODE['SUCCESS']>(
+export default function useFetchFn<S extends unknown = unknown,
+  R extends R_N = R_N,
+  F extends Fn<S, R> = Fn<S, R>,
+  C extends C_S = C_S>(
     fn: F,
     options?: FetchOptions<
       C,
@@ -103,7 +116,7 @@ export default function useFetchFn<S, F extends Fn<S>,
       });
       try {
         // ing.onChange(true);
-        const take = await fn(...args as never);
+        const take = await fn(...args);
         if (take.code == code) {
           successFn?.(take.data);
           await info.open({
