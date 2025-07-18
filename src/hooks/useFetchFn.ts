@@ -4,15 +4,29 @@ import { message as info } from 'antd';
 
 type FetchReturn = ReturnType<typeof useRequest>;
 
-type FetchFn<F> = F;
+const BASE_CODE = {
+  SUCCESS: 200,
+  ERROR: 400,
+  UNAUTHORIZED: 401,
+} as const;
 
-type FetchOptions<F> = {
+type BaseCode = (typeof BASE_CODE)[keyof typeof BASE_CODE];
+
+export type BaseResponseInfo<Data, CODE = BaseCode> = Promise<{
+  code: CODE;
+  data: Data;
+  message: string;
+}>;
+
+export type Fn<S> = (...args: never) => BaseResponseInfo<S>;
+
+type FetchOptions<CODE, DATA> = {
 
   /**
    * 代表请求成功的状态码
    * 默认 200
   */
-  code?: number | string;
+  code?: CODE;
 
   message?: {
     /**
@@ -34,7 +48,7 @@ type FetchOptions<F> = {
    * @param data 
    * @returns 
    */
-  onSuccess?: (data) => void;
+  onSuccess?: (data: DATA) => void;
   /**
    * 自定义处理错误
    */
@@ -46,16 +60,18 @@ type FetchOptions<F> = {
  * @param options 消息配置项
  * @returns 
  */
-export default function useFetchFn<F, S extends FetchFn<F>>(
-  fn: F,
-  options?: FetchOptions<S>,
-): FetchReturn {
+export default function useFetchFn<S, F extends Fn<S>,
+  C extends typeof BASE_CODE['SUCCESS']>(
+    fn: F,
+    options?: FetchOptions<
+      C,
+      Awaited<ReturnType<F>>['data']
+    >,
+  ): FetchReturn {
 
   if (typeof fn !== 'function') throw new Error('fn is not a function');
 
   const key = 'create' + Math.random();
-
-  // const determine = useDetermine();
 
   const {
     message,
@@ -87,7 +103,7 @@ export default function useFetchFn<F, S extends FetchFn<F>>(
       });
       try {
         // ing.onChange(true);
-        const take = await fn(...args);
+        const take = await fn(...args as never);
         if (take.code == code) {
           successFn?.(take.data);
           await info.open({
